@@ -140,10 +140,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FileFinder.cpp" />
+    <ClCompile Include="FileViewer.cpp" />
     <ClCompile Include="QuickFind.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileFinder.h" />
+    <ClInclude Include="FileViewer.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

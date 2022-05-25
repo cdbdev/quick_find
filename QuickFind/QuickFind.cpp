@@ -5,6 +5,7 @@
 #include <string>
 
 #include "FileFinder.h"
+#include "FileViewer.h"
 
 #pragma comment(linker, \
   "\"/manifestdependency:type='Win32' "\
@@ -25,6 +26,9 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	LVCOLUMN lvc{};
 	LVITEM lvi{};
+
+	int iSlected = 0;
+	wchar_t colValue[255]{};
 
 	switch (uMsg)
 	{
@@ -105,6 +109,7 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		memset(&lvc, 0, sizeof(2));
 
 		listControl = GetDlgItem(hDlg, IDC_LIST1);
+		SendMessage(listControl, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
 
 		/********************************************************************
 		*   DEFINE THE COLUMNS
@@ -136,6 +141,42 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_DESTROY:
 		PostQuitMessage(0);
+		return TRUE;
+
+	case WM_NOTIFY:
+		switch (((LPNMHDR)lParam)->code)
+		{
+		case NM_DBLCLK:
+			listControl = GetDlgItem(hDlg, IDC_LIST1);
+			iSlected = SendMessage(listControl, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
+			if (iSlected == -1)
+			{
+				MessageBox(hDlg, TEXT("No Items in List"),TEXT("Warning"), MB_OK | MB_ICONINFORMATION);
+				break;
+			}
+
+			// Get selected line directory;
+			lvi.mask = LVIF_TEXT;
+			lvi.iSubItem = 1;
+			lvi.pszText = colValue;
+			lvi.cchTextMax = 256;
+			lvi.iItem = iSlected;
+			SendMessage(listControl, LVM_GETITEMTEXT, iSlected, (LPARAM)&lvi);
+			std::wstring dirView = lvi.pszText;
+
+			// Get selected line file
+			lvi.mask = LVIF_TEXT;
+			lvi.iSubItem = 0;
+			lvi.pszText = colValue;
+			lvi.cchTextMax = 256;
+			lvi.iItem = iSlected;
+			SendMessage(listControl, LVM_GETITEMTEXT, iSlected, (LPARAM)&lvi);
+			std::wstring fileView = lvi.pszText;
+
+			//MessageBox(hDlg, lvi.pszText, TEXT("Info"), MB_OK);
+			FileViewer fv(dirView+fileView);
+			fv.view();
+		}
 		return TRUE;
 	}
 
