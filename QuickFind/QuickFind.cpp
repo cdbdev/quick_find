@@ -4,6 +4,7 @@
 #include "resource.h"
 #include <string>
 
+#include "ConfigReader.h"
 #include "FileFinder.h"
 #include "FileViewer.h"
 
@@ -106,6 +107,11 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return TRUE;
 
 	case WM_INITDIALOG:
+	{
+		// Get config info		
+		ConfigReader cr;
+		ConfigReader::configinfo configInfo = cr.read();
+
 		memset(&lvc, 0, sizeof(2));
 
 		listControl = GetDlgItem(hDlg, IDC_LIST1);
@@ -138,7 +144,7 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			return FALSE;
 
 		return TRUE;
-
+	}
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return TRUE;

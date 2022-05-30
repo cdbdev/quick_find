@@ -139,11 +139,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConfigReader.cpp" />
     <ClCompile Include="FileFinder.cpp" />
     <ClCompile Include="FileViewer.cpp" />
     <ClCompile Include="QuickFind.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConfigReader.h" />
     <ClInclude Include="FileFinder.h" />
     <ClInclude Include="FileViewer.h" />
     <ClInclude Include="resource.h" />
