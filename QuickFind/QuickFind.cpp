@@ -50,12 +50,15 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				return TRUE;
 			}
 
+			// Get config values
+			ConfigReader::configinfo* configSession = reinterpret_cast<ConfigReader::configinfo*>(GetWindowLongPtr(hDlg, GWLP_USERDATA));
+
+
 			// Get List Control
 			listControl = GetDlgItem(hDlg, IDC_LIST1);
 			ListView_DeleteAllItems(listControl);
 
 			// Initialize items
-
 			lvi.mask = LVIF_TEXT | LVIF_STATE;
 			lvi.stateMask = 0;
 			lvi.state = 0;
@@ -102,6 +105,8 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (MessageBox(hDlg, TEXT("Close the program?"), TEXT("Close"),
 			MB_ICONQUESTION | MB_YESNO) == IDYES)
 		{
+			ConfigReader::configinfo* configSession = reinterpret_cast<ConfigReader::configinfo*>(GetWindowLongPtr(hDlg, GWLP_USERDATA));
+			delete(configSession);
 			DestroyWindow(hDlg);
 		}
 		return TRUE;
@@ -112,6 +117,14 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		ConfigReader cr;
 		ConfigReader::configinfo configInfo = cr.read();
 
+		// Add config info to lParam
+		ConfigReader::configinfo* configSession = reinterpret_cast<ConfigReader::configinfo*>(lParam);
+		configSession->workspace = configInfo.workspace;
+		configSession->filetypes = configInfo.filetypes;
+		configSession->action = configInfo.action;
+		SetWindowLongPtr(hDlg, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(configSession));
+
+		// Initialize List Control
 		memset(&lvc, 0, sizeof(2));
 
 		listControl = GetDlgItem(hDlg, IDC_LIST1);
@@ -196,7 +209,13 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmdSh
 	BOOL ret;
 
 	InitCommonControls();
-	hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_DIALOG1), 0, DialogProc, 0);
+
+	// Add config info to session
+	ConfigReader::configinfo* configSession = new (std::nothrow) ConfigReader::configinfo;
+	if (configSession == NULL)
+		return 0;
+
+	hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_DIALOG1), 0, DialogProc, reinterpret_cast<LPARAM>(configSession));
 	ShowWindow(hDlg, nCmdShow);
 
 	while ((ret = GetMessage(&msg, 0, 0, 0)) != 0) {
