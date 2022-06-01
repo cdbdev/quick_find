@@ -65,7 +65,7 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			// BEGIN TEST FileFinder
 			FileFinder ff(buff);
-			auto filesFound = ff.find(L"c:/tmp/new/");
+			auto filesFound = ff.find(configSession->workspace);
 
 			for (auto it = std::begin(filesFound); it != std::end(filesFound); ++it) {
 				int index = std::distance(filesFound.begin(), it);
@@ -105,8 +105,6 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (MessageBox(hDlg, TEXT("Close the program?"), TEXT("Close"),
 			MB_ICONQUESTION | MB_YESNO) == IDYES)
 		{
-			ConfigReader::configinfo* configSession = reinterpret_cast<ConfigReader::configinfo*>(GetWindowLongPtr(hDlg, GWLP_USERDATA));
-			delete(configSession);
 			DestroyWindow(hDlg);
 		}
 		return TRUE;
@@ -227,6 +225,9 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmdSh
 			DispatchMessage(&msg);
 		}
 	}
+
+	// Free config session
+	delete(configSession);
 
 	return 0;
 }

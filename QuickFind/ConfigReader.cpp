@@ -1,12 +1,14 @@
 #include <fstream>
 #include <windows.h>
 #include <sstream>
+#include <fileapi.h>
 
 #include "ConfigReader.h"
 
 ConfigReader::configinfo ConfigReader::read()
 {
     configinfo configInfo;
+    char tempPath[MAX_PATH];
 
     const std::wstring configPath = L"QuickFindGlobal.properties";
 
@@ -42,6 +44,20 @@ ConfigReader::configinfo ConfigReader::read()
             std::string configValue = line.substr(delimiterPos + 1);
 
             if (configName == "workspace") {
+                // check if workspace is filled in
+                if (configValue.empty()) {
+                    // default to user temp folder
+                    GetTempPathA(MAX_PATH, tempPath);
+                    configValue = tempPath;
+                }
+
+                // check for ending separator
+                char endingChar = configValue.back();
+                if (endingChar != '/' && endingChar != '\\') {
+                    configValue.push_back('\\');
+                }
+
+                // Add workspace to config info
                 std::wstring value = std::wstring(configValue.begin(), configValue.end());
                 configInfo.workspace = value;
             }
