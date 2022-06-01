@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <vector>
 #include <string>
+#include <set>
 
 class FileFinder
 {
@@ -12,8 +13,8 @@ public:
 	};
 
 	// Initialize FileFinder
-	FileFinder(std::wstring  fileName)
-		: m_fileName(fileName)
+	FileFinder(std::wstring  fileName, std::set<std::string> fileTypes)
+		: m_fileName(fileName), m_filetypes(fileTypes)
 	{}
 
 	// find method
@@ -21,5 +22,8 @@ public:
 
 private:
 	std::wstring  m_fileName;
+	std::set<std::string> m_filetypes;
+
+	bool endsWith(std::wstring const& str, std::string const& suffix);
 };
 

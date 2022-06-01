@@ -58,6 +58,23 @@ std::vector<FileFinder::fileinfo> FileFinder::find(std::wstring dir) {
 		else
 		{
 			fileName = ffd.cFileName;
+
+			// check if extension works out
+			bool extFound = false;
+			std::set<std::string>::iterator itr;
+
+			for (itr = m_filetypes.begin(); itr != m_filetypes.end(); itr++)
+			{
+				if (endsWith(std::wstring(fileName), *itr)) {
+					extFound = true;
+					exit;
+				}
+			}
+
+			if (!extFound)
+				continue;
+
+			// check if input is part of the filename
 			if (wcsstr(fileName, m_fileName.c_str()) != 0 || dir.find(m_fileName) != std::string::npos) {
 				fileList.push_back(FileFinder::fileinfo{ dir, fileName });
 			}
@@ -72,4 +89,11 @@ std::vector<FileFinder::fileinfo> FileFinder::find(std::wstring dir) {
 	FindClose(hFind);
 
 	return fileList;
+}
+
+bool FileFinder::endsWith(std::wstring const& str, std::string const& suffix) {
+	std::string fn = std::string(str.begin(), str.end());
+	
+	int extLength = suffix.size();
+	return fn.substr(fn.size() - extLength, fn.size()-1) == suffix;
 }

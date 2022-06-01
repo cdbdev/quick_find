@@ -64,7 +64,7 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			lvi.state = 0;
 
 			// BEGIN TEST FileFinder
-			FileFinder ff(buff);
+			FileFinder ff(buff, configSession->filetypes);
 			auto filesFound = ff.find(configSession->workspace);
 
 			for (auto it = std::begin(filesFound); it != std::end(filesFound); ++it) {
