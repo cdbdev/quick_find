@@ -67,7 +67,7 @@ std::vector<FileFinder::fileinfo> FileFinder::find(std::wstring dir) {
 			{
 				if (endsWith(std::wstring(fileName), *itr)) {
 					extFound = true;
-					exit;
+					break;
 				}
 			}
 
@@ -92,8 +92,8 @@ std::vector<FileFinder::fileinfo> FileFinder::find(std::wstring dir) {
 }
 
 bool FileFinder::endsWith(std::wstring const& str, std::string const& suffix) {
-	std::string fn = std::string(str.begin(), str.end());
+	//std::string fn = std::string(str.begin(), str.end());
 	
-	int extLength = suffix.size();
-	return fn.substr(fn.size() - extLength, fn.size()-1) == suffix;
+	size_t extLength = suffix.size();
+	return str.substr(str.size() - extLength, str.size()-1) == std::wstring(suffix.begin(), suffix.end());
 }

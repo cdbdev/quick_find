@@ -68,7 +68,7 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			auto filesFound = ff.find(configSession->workspace);
 
 			for (auto it = std::begin(filesFound); it != std::end(filesFound); ++it) {
-				int index = std::distance(filesFound.begin(), it);
+				int index = static_cast<int>(std::distance(filesFound.begin(), it));
 
 				FileFinder::fileinfo fileInfo = *it;
 				std::wstring fileName = fileInfo.fileName;
@@ -165,7 +165,7 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 		case NM_DBLCLK:
 			listControl = GetDlgItem(hDlg, IDC_LIST1);
-			iSlected = SendMessage(listControl, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
+			iSlected = (int)SendMessage(listControl, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 			if (iSlected == -1)
 			{
 				MessageBox(hDlg, TEXT("No Items in List"),TEXT("Warning"), MB_OK | MB_ICONINFORMATION);
