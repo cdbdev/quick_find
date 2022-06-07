@@ -190,9 +190,13 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SendMessage(listControl, LVM_GETITEMTEXT, iSlected, (LPARAM)&lvi);
 			std::wstring fileView = lvi.pszText;
 
-			//MessageBox(hDlg, lvi.pszText, TEXT("Info"), MB_OK);
-			FileViewer fv(dirView+fileView);
-			fv.view();
+			// Run FileViewer
+			ConfigReader::configinfo* configSession = reinterpret_cast<ConfigReader::configinfo*>(GetWindowLongPtr(hDlg, GWLP_USERDATA));
+			FileViewer fv(configSession, dirView+fileView);
+			int result = fv.view();
+			if (result == -1) {
+				MessageBox(hDlg, TEXT("SciTE instance not found."), TEXT("Error"), MB_OK);
+			}
 		}
 		return TRUE;
 	}
